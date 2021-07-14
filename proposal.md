@@ -5,11 +5,13 @@ The purpose of this dashboard will be to convey changes in currency value, relat
 
 ### Data
 Hourly/daily forex data for approximately 15 currencies most frequently traded
-
+Current forex futures data
 
 ### Tools
-Containerization: Docker
-
+* Containerization: Docker
+* Front End: Flask
+* Data retrieval: yfinance (Yahoo Finance)
+* Data visualizations: matplotlib, Plotly
 
 ### Minimum Viable Product
 A working dashboard that is hosted remotely and contains some of the intended visualizations (see below).
