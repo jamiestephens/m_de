@@ -4,8 +4,8 @@
 The purpose of this dashboard will be to convey changes in currency value and forex arbitrage opportunities through a variety of visualizations. 
 
 ### Data
-Hourly/daily forex data for approximately 15 currencies most frequently traded
-Current forex futures data
+* Hourly/daily forex data for approximately 15 currencies most frequently traded
+* Current forex futures data
 
 ### Tools
 * Containerization: Docker
@@ -24,3 +24,7 @@ Map:
 Currency Arbitrage Guide: 
 
 ![image](https://user-images.githubusercontent.com/71529189/125687269-d349b1ab-0a2d-46c4-bcfb-b53e2bb76cef.png)
+
+FX Heat Map:
+![image](https://user-images.githubusercontent.com/71529189/125703292-cb48c709-62dc-4d49-ad34-ff9d6e7d35c2.png)
+
