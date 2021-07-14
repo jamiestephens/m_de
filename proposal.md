@@ -1,7 +1,7 @@
 ## Foreign Exchange Trading Dashboard
 
 ### Purpose
-The purpose of this dashboard will be to convey changes in currency value, relatively speaking, through a variety of visualizations. 
+The purpose of this dashboard will be to convey changes in currency value and forex arbitrage opportunities through a variety of visualizations. 
 
 ### Data
 Hourly/daily forex data for approximately 15 currencies most frequently traded
