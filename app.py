@@ -11,7 +11,6 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
-import os
 
 jpy = yf.download(tickers = 'JPYAUD=X' ,period ='2d', interval = '1m')
 
