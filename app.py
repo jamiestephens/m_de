@@ -11,7 +11,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
-
+import os
 
 jpy = yf.download(tickers = 'JPYAUD=X' ,period ='2d', interval = '1m')
 
@@ -29,9 +29,10 @@ external_stylesheets = [
     }
 ]
 
-
 app = dash.Dash(__name__,
                 external_stylesheets=external_stylesheets)
+
+server = app.server
 
 app.layout = html.Div(children=[
     html.H1(
@@ -44,4 +45,6 @@ app.layout = html.Div(children=[
         'textAlign': 'center'
     })
 ])
-app.run_server(debug=False)
+
+if __name__ == '__main__':
+    app.run_server()
