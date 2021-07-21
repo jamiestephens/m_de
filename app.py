@@ -11,12 +11,17 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
+import pandas as pd
+from sqlalchemy import create_engine
 
-jpy = yf.download(tickers = 'JPYAUD=X' ,period ='2d', interval = '1m')
+engine = create_engine('sqlite:///forex.db'.connect()
+                       
+                       
+def makeheatmapdf:
+    df = pd.read_sql_table('employee', engine)
+    
+    
 
-jpy =  jpy.reset_index()
-
-fig = px.line(jpy, x="Datetime", y="Adj Close", title='JPY to AUD')
 
 external_stylesheets = [
     'https://codepen.io/chriddyp/pen/bWLwgP.css',
@@ -31,7 +36,6 @@ external_stylesheets = [
 app = dash.Dash(__name__,
                 external_stylesheets=external_stylesheets)
 
-server = app.server
 
 app.layout = html.Div(children=[
     html.H1(
