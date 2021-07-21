@@ -21,50 +21,41 @@ engine = create_engine('sqlite:///forex.db')
 
 currencies = ['JPY','GBP','EUR','AUD','NZD','CNY','HKD','SGD','INR','MXN','PHP','THB','MYR','ZAR','RUB']
 
-def makeheatmapdf():
-    df = pd.read_sql_table('heatmaptable', engine)
-    df
-    
-    final_df = pd.DataFrame(columns=['Currency','First','Last'])
-    for i in currencies:
-        if i in df.columns:
-            first_value = df[i].loc[~df[i].isnull()].iloc[0]
-            last_value = df[i].loc[~df[i].isnull()].iloc[-1]
-            final_df.loc[len(final_df.index)] = [i, first_value,last_value]
-    final_df['Difference'] = final_df['Last'] - final_df['First']
-    final_df['Percent Chg'] = final_df['Difference'] / final_df['First']
-    final_df.reset_index()
-    country_convert = {'JPY':'JPN',
-                       'GBP':'GBR',
-                       'EUR':'DEU',
-                       'AUD':'AUS',
-                       'NZD':'NZL',
-                       'CNY':'CHN',
-                       'HKD':'HKG',
-                       'SGD':'SGP',
-                       'INR':'IDN',
-                       'MXN':'MEX',
-                       'PHP':'PHL',
-                       'THB':'THA',
-                       'MYR':'MYS',
-                       'ZAR':'ZAF',
-                       'RUB':'RUS'
-        }
-    print(final_df)
-    final_df['Currency'] = final_df['Currency'].map(country_convert)
-    print(final_df)
-    fig = px.choropleth(final_df, locations="Currency",
-                    color="Percent Chg",
-                    hover_name="Currency",
-                    color_continuous_scale=px.colors.sequential.Plasma)
-    return fig
-    
-fig = makeheatmapdf()
+df = pd.read_sql_table('heatmaptable', engine)
+df
 
-
-def linechart():
-    pass
-
+final_df = pd.DataFrame(columns=['Currency','First','Last'])
+for i in currencies:
+    if i in df.columns:
+        first_value = df[i].loc[~df[i].isnull()].iloc[0]
+        last_value = df[i].loc[~df[i].isnull()].iloc[-1]
+        final_df.loc[len(final_df.index)] = [i, first_value,last_value]
+final_df['Difference'] = final_df['Last'] - final_df['First']
+final_df['Percent Chg'] = final_df['Difference'] / final_df['First']
+final_df.reset_index()
+country_convert = {'JPY':'JPN',
+                   'GBP':'GBR',
+                   'EUR':'DEU',
+                   'AUD':'AUS',
+                   'NZD':'NZL',
+                   'CNY':'CHN',
+                   'HKD':'HKG',
+                   'SGD':'SGP',
+                   'INR':'IDN',
+                   'MXN':'MEX',
+                   'PHP':'PHL',
+                   'THB':'THA',
+                   'MYR':'MYS',
+                   'ZAR':'ZAF',
+                   'RUB':'RUS'
+    }
+print(final_df)
+final_df['Currency'] = final_df['Currency'].map(country_convert)
+print(final_df)
+fig = px.choropleth(final_df, locations="Currency",
+                color="Percent Chg",
+                hover_name="Currency",
+                color_continuous_scale=px.colors.sequential.Plasma)
 
 
 external_stylesheets = [
