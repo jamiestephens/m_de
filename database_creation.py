@@ -58,5 +58,6 @@ for i in currencies:
     
 heat_df.to_sql('heatmaptable',engine)
 
-#driver = webdriver.Firefox()
-#driver.get("http://www.python.org")
+
+driver = webdriver.Firefox()
+driver.get("http://www.python.org")

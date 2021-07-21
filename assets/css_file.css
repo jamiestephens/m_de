@@ -1,0 +1,20 @@
+body {
+background-color: grey;
+margin: 25px 120px 75px 120px;
+}
+
+H1 {
+color: black;
+text-align: center;
+margin-bottom: 30px;
+}
+H2 {
+color: black;
+text-align: center,
+}
+
+p{
+font-family: Helvetica;
+font-size: 15px;
+color: black;
+}

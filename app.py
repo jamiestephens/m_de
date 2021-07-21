@@ -16,13 +16,18 @@ from sqlalchemy import create_engine
 import numpy as np
 import geojson
 import plotly.graph_objs as go
+import dash_bootstrap_components as dbc
+import json
+import plotly.graph_objects as go
 
+with open('./assets/custom_georegions.json', 'r') as fp:
+    custom_geoj = json.load(fp)
+    
 engine = create_engine('sqlite:///forex.db')
 
 currencies = ['JPY','GBP','EUR','AUD','NZD','CNY','HKD','SGD','INR','MXN','PHP','THB','MYR','ZAR','RUB']
 
 df = pd.read_sql_table('heatmaptable', engine)
-df
 
 final_df = pd.DataFrame(columns=['Currency','First','Last'])
 for i in currencies:
@@ -31,11 +36,10 @@ for i in currencies:
         last_value = df[i].loc[~df[i].isnull()].iloc[-1]
         final_df.loc[len(final_df.index)] = [i, first_value,last_value]
 final_df['Difference'] = final_df['Last'] - final_df['First']
-final_df['Percent Chg'] = final_df['Difference'] / final_df['First']
-final_df.reset_index()
+final_df['Percent Chg'] = (final_df['Difference'] / final_df['First'])*100
 country_convert = {'JPY':'JPN',
                    'GBP':'GBR',
-                   'EUR':'DEU',
+                   'EUR':'EUR',
                    'AUD':'AUS',
                    'NZD':'NZL',
                    'CNY':'CHN',
@@ -47,44 +51,88 @@ country_convert = {'JPY':'JPN',
                    'THB':'THA',
                    'MYR':'MYS',
                    'ZAR':'ZAF',
-                   'RUB':'RUS'
-    }
-print(final_df)
+                   'RUB':'RUS'}
+
 final_df['Currency'] = final_df['Currency'].map(country_convert)
-print(final_df)
+
+#final_df = final_df.transpose()
+#final_df.set_index('Currency').transpose()
+
+#final_df = final_df.iloc[1: , :]
+
+#final_df.set_index('Currency')
+
+#final_df = final_df.set_index([0])
+
+
+# fig = px.choropleth(final_df, locations="Currency",
+#                 color="Percent Chg",
+#                 geojson=custom_geoj,
+#                 featureidkey="properties.ISO_A3",
+#                 hover_name="Currency",
+#                 color_continuous_scale=px.colors.sequential.Plasma)
+
+# fig = go.Figure(
+#      data=[
+#          go.Choroplethmapbox(
+#              geojson=custom_geoj,
+#              z=final_df["Percent Chg"],
+#              featureidkey="properties.ISO_A3",
+#              locations="geometry.coordinates"
+#      )
+#          ]
+#      )
+
+
+# fig = go.Figure(go.Choroplethmapbox(geojson=custom_geoj,
+#                            locations=final_df['Currency'],
+#                            z=final_df['Percent Chg'],
+#                            featureidkey="properties.ISO_A3",
+#                            text=final_df['Currency']))
+      
+# fig = go.Figure(
+#     data=[
+#         go.Choroplethmapbox(
+#             geojson=custom_geoj,
+#             z=final_df["Percent Chg"],
+#             featureidkey="properties.ISO_A3",
+#             locations=final_df["Currency"],
+#         )
+#     ]
+# )
+
+
+# fig = go.Figure(go.Choroplethmapbox(geojson=custom_geoj, 
+#                                     locations=final_df["Currency"], 
+#                                     z=final_df["Percent Chg"],
+#                                     featureidkey="properties.ISO_A3"))
 fig = px.choropleth(final_df, locations="Currency",
                 color="Percent Chg",
                 hover_name="Currency",
                 color_continuous_scale=px.colors.sequential.Plasma)
+          
+fig.update_layout(paper_bgcolor='rgb(211,211,211)')
+fig.show()   
+timespan = ['Last 24 hours','Last 3 days','Last 7 days']
+
+app = dash.Dash(__name__)
+
+body = html.Div([
+    html.H1("Foreign Exchange Arbitrage Dashboard")
+    , dbc.Row(dbc.Col(html.Div(dbc.Alert("Jamie Stephens • July 2021 • Metis"),style={'textAlign':'center','color':'black'})))
+    , dbc.Row([
+            dbc.Col(html.Div([html.P("Time Duration",style={'font-weight':'700'}),dcc.RadioItems(id='heatmaptimes',options=[{'value': x, 'label': x} for x in timespan],
+                                             value=timespan[0],
+                                             labelStyle={'display': 'block'})],style={'textAlign':'center'}), width=3)
+            , dbc.Col(html.Div( dcc.Graph(figure=fig),style={}))
+            ])
+    ,dbc.Row([dbc.Col(html.Div(dbc.Alert("Jamie Stephens"),style={'textAlign':'center','color':'black'})),
+             dbc.Col(html.Div(dbc.Alert("Jamie Stephens"),style={'textAlign':'center','color':'black'}))
+            ])
+    ])
 
 
-external_stylesheets = [
-    'https://codepen.io/chriddyp/pen/bWLwgP.css',
-    {
-        'href': 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css',
-        'rel': 'stylesheet',
-        'integrity': 'sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO',
-        'crossorigin': 'anonymous'
-    }
-]
-
-app = dash.Dash(__name__,
-                external_stylesheets=external_stylesheets)
-
-
-app.layout = html.Div(children=[
-    html.H1(
-        children='Foreign Exchange Arbitrage Dashboard',
-        style={
-            'textAlign': 'center'
-        }
-    ),
-    html.Div(children='Jamie Stephens', style={
-        'textAlign': 'center'
-    }),
-    html.Div([
-    dcc.Graph(figure=fig)])
-])
+app.layout = html.Div([body])
 
 if __name__ == '__main__':
     app.run_server()
