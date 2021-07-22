@@ -8,23 +8,31 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 import time
+import pandas as pd
+import sqlalchemy
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
+gbl = globals()
 
-invest_list = ['https://www.investing.com/currencies/us-dollar-index-contracts'
-#               ,'https://www.investing.com/currencies/gbp-usd-contracts',
-#               'https://www.investing.com/currencies/usd-jpy-contracts',
-#               'https://www.investing.com/currencies/eur-usd-contracts',
-#               'https://www.investing.com/currencies/usd-mxn-contracts',
-#               'https://www.investing.com/currencies/aud-usd-contracts',
-#               'https://www.investing.com/currencies/nzd-usd-contracts',
-#               'https://www.investing.com/currencies/usd-zar-contracts'
-               ]
 
-invest_dict = {}
+invest_dict = {'https://www.investing.com/currencies/us-dollar-index-contracts':'USD',
+               'https://www.investing.com/currencies/gbp-usd-contracts':'GBP',
+               'https://www.investing.com/currencies/usd-jpy-contracts':'JPY',
+               'https://www.investing.com/currencies/eur-usd-contracts':'EUR',
+               'https://www.investing.com/currencies/usd-mxn-contracts':'MXN',
+               'https://www.investing.com/currencies/aud-usd-contracts':'AUD',
+               'https://www.investing.com/currencies/nzd-usd-contracts':'NZD',
+               'https://www.investing.com/currencies/usd-zar-contracts':'ZAR'
+               }
+
+investing_df = pd.DataFrame()
 
 driver = webdriver.Firefox(executable_path=r'C:\Users\Administrator\AppData\Local\Programs\Python\geckodriver\geckodriver.exe')
 
-for i in invest_list:
-    driver.get(i)
+engine = create_engine('sqlite:///forex.db')
+meta = MetaData()
+
+for k,r in invest_dict.items():
+    driver.get(k)
     wait = WebDriverWait(driver, 5)
     time.sleep(3)
     driver.refresh()
@@ -36,19 +44,30 @@ for i in invest_list:
     
     xyz = xyz.splitlines()
     
-    for i in xyz:
-        
-        i = i[:-10]
-        i = i.split(' ')
-        i.remove('')
-        
-       # i[1:2] = [''.join(map(str,i[1:2]))]
-        
-        print(i)
-        print(type(i))
-        print(i[1:9])
-        
-        
-    length = len(xyz)
+    df_name = "futures_"+str(r)
+
+    temp_df = pd.DataFrame(columns=['Expiration','Last',
+                                                   'Change','Open','High',
+                                                   'Low','Volume','Time'])
     
-    print(length)
+    counter = 0
+    for i in xyz:
+        i = i[:-10]
+        j = i.split(' ')
+        j.remove('')
+        
+        if counter > 0:
+            new_j0 = str(j[0]) + " " + str(j[1])
+            del j[:2]
+            j.insert(0,new_j0)
+        
+        counter += 1
+        j_series = pd.Series(j, index = temp_df.columns)
+        temp_df = temp_df.append(j_series,ignore_index=True)
+        
+    
+    
+    gbl[df_name] = temp_df.copy()
+    print(gbl["futures_"+str(r)])
+    gbl[df_name].to_sql(df_name,engine,if_exists='replace')
+    

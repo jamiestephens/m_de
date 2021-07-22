@@ -27,7 +27,7 @@ for i in currencies:
     del df['Volume']
     del df['Adj Close']
     table_name = 'hrlytable_' + j
-    df.to_sql(table_name,engine)
+    df.to_sql(table_name,engine,if_exists='replace')
     
     df_1 = yf.download(tickers=i,period='7d',interval='1m')
     
@@ -35,7 +35,7 @@ for i in currencies:
     df_1 = df_1.reset_index()
     
     table_name = 'minutetable_' + j
-    df_1.to_sql(table_name,engine)
+    df_1.to_sql(table_name,engine,if_exists='replace')
     
     selected_columns = df_1[['Datetime']]
     
@@ -56,8 +56,4 @@ for i in currencies:
     df_1.rename(columns = {'Close':j}, inplace = True)
     heat_df = pd.merge(heat_df,df_1,on='Datetime',how='outer')
     
-heat_df.to_sql('heatmaptable',engine)
-
-
-driver = webdriver.Firefox()
-driver.get("http://www.python.org")
+heat_df.to_sql('heatmaptable',engine,if_exists='replace')

@@ -20,6 +20,10 @@ import dash_bootstrap_components as dbc
 import json
 import plotly.graph_objects as go
 
+import webscrape_investing
+
+
+
 with open('./assets/custom_georegions.json', 'r') as fp:
     custom_geoj = json.load(fp)
     
@@ -55,57 +59,6 @@ country_convert = {'JPY':'JPN',
 
 final_df['Currency'] = final_df['Currency'].map(country_convert)
 
-#final_df = final_df.transpose()
-#final_df.set_index('Currency').transpose()
-
-#final_df = final_df.iloc[1: , :]
-
-#final_df.set_index('Currency')
-
-#final_df = final_df.set_index([0])
-
-
-# fig = px.choropleth(final_df, locations="Currency",
-#                 color="Percent Chg",
-#                 geojson=custom_geoj,
-#                 featureidkey="properties.ISO_A3",
-#                 hover_name="Currency",
-#                 color_continuous_scale=px.colors.sequential.Plasma)
-
-# fig = go.Figure(
-#      data=[
-#          go.Choroplethmapbox(
-#              geojson=custom_geoj,
-#              z=final_df["Percent Chg"],
-#              featureidkey="properties.ISO_A3",
-#              locations="geometry.coordinates"
-#      )
-#          ]
-#      )
-
-
-# fig = go.Figure(go.Choroplethmapbox(geojson=custom_geoj,
-#                            locations=final_df['Currency'],
-#                            z=final_df['Percent Chg'],
-#                            featureidkey="properties.ISO_A3",
-#                            text=final_df['Currency']))
-      
-# fig = go.Figure(
-#     data=[
-#         go.Choroplethmapbox(
-#             geojson=custom_geoj,
-#             z=final_df["Percent Chg"],
-#             featureidkey="properties.ISO_A3",
-#             locations=final_df["Currency"],
-#         )
-#     ]
-# )
-
-
-# fig = go.Figure(go.Choroplethmapbox(geojson=custom_geoj, 
-#                                     locations=final_df["Currency"], 
-#                                     z=final_df["Percent Chg"],
-#                                     featureidkey="properties.ISO_A3"))
 fig = px.choropleth(final_df, locations="Currency",
                 color="Percent Chg",
                 hover_name="Currency",
