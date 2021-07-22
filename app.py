@@ -74,23 +74,8 @@ futures_GBP = pd.read_sql_table('futures_GBP', engine,index_col='index')
 futures_EUR = pd.read_sql_table('futures_EUR', engine,index_col='index')
 futures_AUD = pd.read_sql_table('futures_AUD', engine,index_col='index')
 futures_NZD = pd.read_sql_table('futures_NZD', engine,index_col='index')
-#futures_HKD = pd.read_sql_table('futures_HKD', engine,index_col='index')
-# futures_SGD = pd.read_sql_table('futures_SGD', engine,index_col='index')
-#futures_INR = pd.read_sql_table('futures_INR', engine,index_col='index')
 futures_MXN = pd.read_sql_table('futures_MXN', engine,index_col='index')
-# futures_PHP = pd.read_sql_table('futures_PHP', engine,index_col='index')
-# futures_THB = pd.read_sql_table('futures_THB', engine,index_col='index')
-# futures_MYR = pd.read_sql_table('futures_MYR', engine,index_col='index')
 futures_ZAR = pd.read_sql_table('futures_ZAR', engine,index_col='index')
-#  futures_RUB = pd.read_sql_table('futures_RUB', engine,index_col='index')
-   
-#for i in currencies:
-#    table_name = "futures_"+str(i)
-#    print(table_name)
-#    try:
-#        gbl[table_name] = pd.read_sql_table(table_name, engine,index_col='index')
-#    except ValueError:
-#        pass
 
 futuresdict = {'Japanese Yen':'JPY',
            'British Pound':'GBP',
@@ -110,8 +95,6 @@ app = dash.Dash(__name__)
 
 i = "Euro"
 p = "12 months"
-#table_header = [
-#    html.Thead(html.Tr([html.Th("First Name"), html.Th("Last Name")]))]
 
 rf = 0.0
 
@@ -159,34 +142,43 @@ def linegraph(s):
     hourly_fig = go.Figure(data=go.Scatter(x = hourlychosenmap.index, y = hourlychosenmap.Close))
     return hourly_fig
 
-hourly_fig = linegraph(s)
 
+
+hourly_fig = linegraph(s)
+hourly_fig.update_traces(line_color='#000000')
+hourly_fig.update_layout(paper_bgcolor='rgb(169,169,169)')
+hourly_fig.show()   
 
 body = html.Div([
     html.H1("Foreign Exchange Dashboard")
     , html.H5("Jamie Stephens • July 2021 • Metis",style={'textAlign':'center'})
     , dbc.Row([
-            dbc.Col(html.Div(dbc.Alert([html.P("Time Duration",style={'font-weight':'700'}),dcc.RadioItems(id='heatmaptimes',options=[{'value': x, 'label': x} for x in timespan],
+            dbc.Col(html.Div(dbc.Alert([html.P("Time Duration",style={'font-weight':'700'}),
+                                        html.P("Percent change in value relative to the United States Dollar")
+                                        ,dcc.RadioItems(id='heatmaptimes',options=[{'value': x, 'label': x} for x in timespan],
                                              value=timespan[0],
                                              labelStyle={'display': 'block'})]),style={'textAlign':'center','color':'black'}), width=3)
             , dbc.Col(dbc.Alert(html.Div( dcc.Graph(figure=fig),style={})))
             ])
-    , dbc.Row(dbc.Col(html.Div(dbc.Alert(html.P("USD to ForEx Futures Arbitrage"),style={'textAlign':'center','color':'black'}))))
     , dbc.Row(dbc.Col(html.Div(dbc.Alert(html.Div([dcc.Dropdown(
                                                         id='futuresdropdown',
                                                         options=[{"label":k, "value":v} for k,v in futuresdict.items()],
                                                         value = list(hrly_times.keys())[0])])))))    
-    ,dbc.Row([dbc.Col(html.Div(dbc.Alert([html.P(i + " Relative Change in Value",style={'textAlign':'center','color':'black'}),
-                                          html.Div( dcc.Graph(figure=hourly_fig),style={}),
+    ,dbc.Row([dbc.Col(html.Div(dbc.Alert([html.P(i + " Relative Change in Value (Hourly)",style={'textAlign':'center','color':'black'}),
                                           html.Div([dcc.RadioItems(
                                                         id='hrly_timerange',
                                                         options=[{"label":k, "value":v} for k,v in hrly_times.items()],
-                                                        labelStyle={'display': 'block'})])])))
+                                                        labelStyle={'display': 'block'})],style={"width": "50%"}),
+                                          html.Div( dcc.Graph(figure=hourly_fig),style={})
+                                          ])))
               
               
              ,dbc.Col(html.Div(dbc.Alert([html.P("Futures Contracts"),dash_table.DataTable(id='table',
                                                              columns=[{"name": i, "id": i} for i in futures_EUR.columns],
                                                              data=futures_EUR.to_dict('records'),
+                                                                 style_data={'backgroundColor': 'transparent',
+                                                                             'align':"center"},
+                                                            # sort_action="native",
                                                              style_cell={'fontSize':10, 'font-family':'sans-serif'})]),
                                         style={'textAlign':'center','color':'black'}))
 
