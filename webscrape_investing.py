@@ -10,9 +10,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 import time
 import pandas as pd
 import sqlalchemy
+from selenium.webdriver.firefox.options import Options
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
 gbl = globals()
-
 
 invest_dict = {'https://www.investing.com/currencies/us-dollar-index-contracts':'USD',
                'https://www.investing.com/currencies/gbp-usd-contracts':'GBP',
@@ -26,7 +26,11 @@ invest_dict = {'https://www.investing.com/currencies/us-dollar-index-contracts':
 
 investing_df = pd.DataFrame()
 
-driver = webdriver.Firefox(executable_path=r'C:\Users\Administrator\AppData\Local\Programs\Python\geckodriver\geckodriver.exe')
+opts = Options()
+opts.set_headless()
+assert opts.headless
+
+driver = webdriver.Firefox(executable_path=r'C:\Users\Administrator\AppData\Local\Programs\Python\geckodriver\geckodriver.exe', options=opts)
 
 engine = create_engine('sqlite:///forex.db')
 meta = MetaData()
