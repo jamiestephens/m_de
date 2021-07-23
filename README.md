@@ -4,11 +4,11 @@ Accessing foreign exchange data that's easy to understand and consolidated in on
 
 
 ### Design
-The dashboard was designed to first provide the user with an overview of the most recent activity seen by the most actively traded currencies (such as the Great British Pound, Euro, and Japanese Yen). The user is able to alter the data used by a heat map to the last 24 hrs worth of activity, to the last three days' worth, and to the last weeks' worth. Further down the page, the user can access a line graph showing a singular currency and its value over time as it compared to 
+The dashboard was designed to first provide the user with an overview of the most recent activity seen by the most actively traded currencies (such as the Great British Pound, Euro, and Japanese Yen). The user is able to alter the data used by a heat map to the last 24 hrs worth of activity, to the last three days' worth, and to the last weeks' worth. Further down the page, the user can access a line graph showing a singular currency and its value over time as it compares to the USD and see its value change over a large time frame than the heatmap above. Futures contracts for each of the currencies listed is also available and appears in the grid to the right of the line graph. A final bar graph shows the difference in opening values for each of the futures being actively traded.
 
 
 ### Data
-Approximately 104,000 datapoints were collected and used for this project. The bulk of the data came from the foreign exchange rate updates collected both on a minute and hour basis for separate graphs. Futures data (expiration dates, opening values, highs, and lows) was also collected, but this comprised a much smaller 
+Approximately 104,000 datapoints were collected and used for this project. The bulk of the data came from the foreign exchange rate updates collected both on a minute and hour basis for separate graphs. Futures data (expiration dates, opening values, highs, and lows) was also collected, but this comprised a much smaller proportion of the total dataset.
 
 
 ### Algorithms
