@@ -70,24 +70,8 @@ def arbitragetable(money,p,rf):
     row6 = html.Tr([html.Td("Contracts to trade"), html.Td(" ")])
     row7 = html.Tr([html.Td("Contract size"), html.Td(" ")])
     row8 = html.Tr([html.Td("Delivery"), html.Td(" ")])
-    row9 = html.Tr([html.Td(money + " " + p + " interest rate"), html.Td(" ")])
-    row10 = html.Tr([html.Td("USD " + p + " interest rate"), html.Td(" ")])
-    row11 = html.Tr([html.Td("Interest rate spread"), html.Td(" ")])
-    row12 = html.Tr([html.Td("Fair value"), html.Td(" ")])
-    row13 = html.Tr([html.Td("Anomaly"), html.Td(" ")])
-    row14 = html.Tr([html.Td("Sell 1x " + money + "/USD future at:"), html.Td(" ")])
-    row15 = html.Tr([html.Td("Borrow USD"), html.Td(" ")])
-    row16 = html.Tr([html.Td("Convert USD"), html.Td(" ")])
-    row17 = html.Tr([html.Td("Deposit ",money), html.Td(" ")])
-    row18 = html.Tr([html.Td("After "+ p), html.Td(" ")])
-    row19 = html.Tr([html.Td("Value of "+ money), html.Td(" ")])
-    row22 = html.Tr([html.Td("Deliver amount"), html.Td(" ")])
-    row23 = html.Tr([html.Td("Receive interest"), html.Td(" ")])
-    row24 = html.Tr([html.Td("Repay loan interest at " + str(rf) + "%"), html.Td(" ")])
-    row25 = html.Tr([html.Td("Profit"), html.Td(" ")])
-    table_body = [html.Tbody([row1, row2, row3, row4,row5,row6,row7,row8,row9,row10,row11,row12,row13,row14,row15,row16,row17,row18,
-                          row19,row22,row23,row24,row25])]
-    table = dbc.Table(table_body, bordered=False)
+    table_body = [html.Tbody([row1, row2, row3, row4,row5,row6,row7,row8])]
+    table = dbc.Table(table_body, bordered=False,style={'border-collapse':'collapse'})
     return table
 
 table = arbitragetable('Euro','12 months',0.0)
@@ -152,8 +136,9 @@ body = html.Div([
                                           html.Div(id='content')]),
                                         style={'textAlign':'center','color':'black'})
 
-             ,dbc.Col(dbc.Alert([html.Div(id='content3'),html.P("Currency Arbitrage",style={'textAlign':'center','color':'black','font-weight':'700'}),
-                                          ]))
+             ,dbc.Col(dbc.Alert([html.P("Futures Contracts",style={'textAlign':'center','color':'black','font-weight':'700'}),
+                                          html.Div(id='content7')]),
+                                        style={'textAlign':'center','color':'black'})
     ])])
 #    ])
 
@@ -245,15 +230,40 @@ def newlinegraphanddatatable(currencyname,hrlychoiceline):
     Input('content','data'),
     Input('content','selected_rows'))
 def docalculations(currname,data,selected_rows):
-    
     var = str(currname['props'])
-
     var_partt = var.split('USD')[0]
-
     curr = var_partt[-4:-1]
+    rf = 0
+    p= "0"
+    row1 = html.Tr([html.Td("First currency"), html.Td("United States Dollar")])
+    row2 = html.Tr([html.Td("Second currency"), html.Td(curr)])
+    row3 = html.Tr([html.Td(p), html.Td("0")])
+    row4 = html.Tr([html.Td(str(curr)+"/USD futures quote"), html.Td(" ")])
+    row5 = html.Tr([html.Td(str(curr)+"/USD spot quote"), html.Td(" ")])
+    row6 = html.Tr([html.Td("Contracts to trade"), html.Td(" ")])
+    row7 = html.Tr([html.Td("Contract size"), html.Td(" ")])
+    row8 = html.Tr([html.Td("Delivery"), html.Td(" ")])
+    row9 = html.Tr([html.Td(str(curr) + " " + p + " interest rate"), html.Td(" ")])
+    row10 = html.Tr([html.Td("USD " + p + " interest rate"), html.Td(" ")])
+    row11 = html.Tr([html.Td("Interest rate spread"), html.Td(" ")])
+    row12 = html.Tr([html.Td("Fair value"), html.Td(" ")])
+    row13 = html.Tr([html.Td("Anomaly"), html.Td(" ")])
+    row14 = html.Tr([html.Td("Sell 1x " + curr + "/USD future at:"), html.Td(" ")])
+    row15 = html.Tr([html.Td("Borrow USD"), html.Td(" ")])
+    row16 = html.Tr([html.Td("Convert USD"), html.Td(" ")])
+    row17 = html.Tr([html.Td("Deposit ",curr), html.Td(" ")])
+    row18 = html.Tr([html.Td("After "+p), html.Td(" ")])
+    row19 = html.Tr([html.Td("Value of "+curr), html.Td(" ")])
+    row22 = html.Tr([html.Td("Deliver amount"), html.Td(" ")])
+    row23 = html.Tr([html.Td("Receive interest"), html.Td(" ")])
+    row24 = html.Tr([html.Td("Repay loan interest at " + str(rf) + "%"), html.Td(" ")])
+    row25 = html.Tr([html.Td("Profit"), html.Td(" ")])
+    table_body = [html.Tbody([row1, row2, row3, row4,row5,row6,row7,row8,row9,row10,row11,row12,row13,row14,row15,row16,row17,row18,
+                          row19,row22,row23,row24,row25])]
+    table = html.Div(html.P(dbc.Table(table_body, bordered=False)))
     
-    if len(curr) > 1:
-        print(curr)
+    
+  #  if len(curr)
     
     # if selected_rows != None:
     #     print(data)
@@ -263,12 +273,8 @@ def docalculations(currname,data,selected_rows):
     #     print(copy_split)
     #     print("NOT NONE")
     #     print(selected_rows)
-        
-    htmlcalculator = html.P(curr)    
-    
-    return htmlcalculator
+    return table
 
 if __name__ == '__main__':
  #   app.run_server(host='0.0.0.0', port=8080, debug=True, use_reloader=False)
     app.run_server()
-
