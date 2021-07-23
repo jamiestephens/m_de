@@ -1,10 +1,10 @@
 ## Foreign Exchange Futures Dashboard
 
-Accessing foreign exchange data that's easy to understand and consolidated in one place is a difficult task. This dashboard aims to simplify foreign exchange futures trading by providing graphs and tables with up to date information. The pipeline for this project starts with accessing this raw data from Investing.com via Selenium (web scraping) or yfinance, a Python library that pulls commonly needed data from Yahoo Finance. This data is then organized with dynamically named SQL tables, and placed into a singular SQL database using SqlAlchemy. The data is later pulled as needed and displayed using various HTML components within Dash, allowing for the manipulation of graph views to further understand the data trend.s. 
+Accessing foreign exchange data that's easy to understand and consolidated in one place is a difficult task. This dashboard aims to simplify foreign exchange futures trading by providing graphs and tables with up to date information. The pipeline for this project starts with accessing this raw data from Investing.com via Selenium (web scraping) or yfinance, a Python library that pulls commonly needed data from Yahoo Finance. This data is then organized with dynamically named SQL tables, and placed into a singular SQL database using SqlAlchemy. To economize the space used within the database, minute-based foreign exchange data was discarded as it was not needed for longer-term analysis. The data is later pulled as needed and displayed using various HTML components within Dash, allowing for the manipulation of graph views to further understand the data trends. Callbacks were heavily utilized for this project in order to maximize user functionality. 
 
 
 ### Design
-
+The dashboard was designed to first provide the user with an overview of the most recent activity seen by the most actively traded currencies (such as the Great British Pound, Euro, and Japanese Yen). The user is able to alter the data used by a heat map to the last 24 hrs worth of activity, to the last three days' worth, and to the last weeks' worth. Further down the page, the user can access a line graph showing a singular currency and its value over time as it compared to 
 
 
 ### Data
@@ -12,7 +12,7 @@ Approximately 104,000 datapoints were collected and used for this project. The b
 
 
 ### Algorithms
-Very little was done for this project that was computationally intense. Percentage-based changes in foreign currency value were calculated for a map shown on the dashboard, 
+Very little was done for this project that was computationally intense. Percentage-based changes in foreign currency value were calculated for a map shown on the dashboard, but outside of that calculation the data was presented as is. The majority of the code had to do with either importing data via Selenium or formatting and updating the Dash dashboard. 
 
 ### Tools
 * SQLAlchemy: data storage and retrieval
