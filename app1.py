@@ -55,42 +55,32 @@ futuresdict = {'Japanese Yen':'JPY',
             'Mexican Peso':'MXN',
             'South African Rand':'ZAR'}
 
-# temp_df = pd.DataFrame()
-# for k, v in futuresdict.items():
-#     df_name = "futures_"+str(v)
-#     gbl[df_name] = pd.read_sql_table(df_name, engine,index_col='index')
-#     gbl[df_name].insert(0, 'Currency', v)
-#     temp_df = temp_df.append(gbl[df_name])
-
-# print(temp_df)
-
 app = dash.Dash(__name__)
-
 
 min_times = {'Last 24 hours': 1,
               'Last 3 days': 2,
               'Last 7 days': 3}
     
-def arbitragetable(i,p,rf):
+def arbitragetable(money,p,rf):
     row1 = html.Tr([html.Td("First currency"), html.Td("United States Dollar")])
-    row2 = html.Tr([html.Td("Second currency"), html.Td(i)])
+    row2 = html.Tr([html.Td("Second currency"), html.Td(money)])
     row3 = html.Tr([html.Td(p), html.Td("0")])
-    row4 = html.Tr([html.Td(str(i)+"/USD futures quote"), html.Td(" ")])
-    row5 = html.Tr([html.Td(str(i)+"/USD spot quote"), html.Td(" ")])
+    row4 = html.Tr([html.Td(str(money)+"/USD futures quote"), html.Td(" ")])
+    row5 = html.Tr([html.Td(str(money)+"/USD spot quote"), html.Td(" ")])
     row6 = html.Tr([html.Td("Contracts to trade"), html.Td(" ")])
     row7 = html.Tr([html.Td("Contract size"), html.Td(" ")])
     row8 = html.Tr([html.Td("Delivery"), html.Td(" ")])
-    row9 = html.Tr([html.Td(i + " " + p + " interest rate"), html.Td(" ")])
+    row9 = html.Tr([html.Td(money + " " + p + " interest rate"), html.Td(" ")])
     row10 = html.Tr([html.Td("USD " + p + " interest rate"), html.Td(" ")])
     row11 = html.Tr([html.Td("Interest rate spread"), html.Td(" ")])
     row12 = html.Tr([html.Td("Fair value"), html.Td(" ")])
     row13 = html.Tr([html.Td("Anomaly"), html.Td(" ")])
-    row14 = html.Tr([html.Td("Sell 1x " + i + "/USD future at:"), html.Td(" ")])
+    row14 = html.Tr([html.Td("Sell 1x " + money + "/USD future at:"), html.Td(" ")])
     row15 = html.Tr([html.Td("Borrow USD"), html.Td(" ")])
     row16 = html.Tr([html.Td("Convert USD"), html.Td(" ")])
-    row17 = html.Tr([html.Td("Deposit ",i), html.Td(" ")])
-    row18 = html.Tr([html.Td("After "+p), html.Td(" ")])
-    row19 = html.Tr([html.Td("Value of "+i), html.Td(" ")])
+    row17 = html.Tr([html.Td("Deposit ",money), html.Td(" ")])
+    row18 = html.Tr([html.Td("After "+ p), html.Td(" ")])
+    row19 = html.Tr([html.Td("Value of "+ money), html.Td(" ")])
     row22 = html.Tr([html.Td("Deliver amount"), html.Td(" ")])
     row23 = html.Tr([html.Td("Receive interest"), html.Td(" ")])
     row24 = html.Tr([html.Td("Repay loan interest at " + str(rf) + "%"), html.Td(" ")])
@@ -100,17 +90,35 @@ def arbitragetable(i,p,rf):
     table = dbc.Table(table_body, bordered=False)
     return table
 
-
-i = 'Euro'
-p = '12 months'
-rf = 0.0
-
-table = arbitragetable(i,p,rf)
+table = arbitragetable('Euro','12 months',0.0)
 
 hrly_times = {'30 days': 30,
               '60 days':60,
               '6 months': 182,
               '1 year':365}
+
+rfrates_USD = {30:0.04,
+               60:0.04,
+               90:0.05,
+               365:0.07,
+               730:0.2,
+               1095:0.37,
+               1825:0.71,
+               2555:1.02,
+               3650:1.27,
+               7300:1.82,
+               10950:1.9}
+
+rfrates_NZD = {365:0,
+    730:0.74,
+    1825:1.15,
+    3650:1.52}
+
+rfrates_EUR = {90:-0.663,
+               365:-0.663,
+               730:-0.725,
+               1095:-0.789}
+
 
 header_line = html.H1("Foreign Exchange Dashboard")
 second_line = html.H5("Jamie Stephens • July 2021 • Metis",style={'textAlign':'center'})
@@ -132,22 +140,20 @@ body = html.Div([
                                                         clearable=False,
                                                         options=[{"label":k, "value":v} for k,v in futuresdict.items()],
                                                         value = list(futuresdict.values())[0])])))))    
-    ,dbc.Row([dbc.Col(html.Div(dbc.Alert([html.P(i + "/USD Change in Value",style={'textAlign':'center','color':'black','font-weight':'700'}),
+    ,dbc.Row([dbc.Col(dbc.Alert([html.Div(id='linegraphheader'),
                                           html.Div( dcc.Graph(id='singleforex'),style={}),
                                           html.Div([dcc.RadioItems(
                                                         id='hrly_timerange',
                                                         options=[{"label":k, "value":v} for k,v in hrly_times.items()],
                                                         value = list(hrly_times.values())[3],
-                                                        labelStyle={'display': 'block'})],style={"width": "50%"})])))
+                                                        labelStyle={'display': 'block'})],style={"width": "50%"})]))
               
-             
-
              ,dbc.Col(dbc.Alert([html.P("Futures Contracts",style={'textAlign':'center','color':'black','font-weight':'700'}),
                                           html.Div(id='content')]),
                                         style={'textAlign':'center','color':'black'})
 
-             ,dbc.Col(html.Div(dbc.Alert(dbc.Alert([html.P("Currency Arbitrage",style={'textAlign':'center','color':'black','font-weight':'700'}),
-                                          html.P(table)]))))
+             ,dbc.Col(dbc.Alert([html.Div(id='content3'),html.P("Currency Arbitrage",style={'textAlign':'center','color':'black','font-weight':'700'}),
+                                          ]))
     ])])
 #    ])
 
@@ -189,31 +195,33 @@ def heatmap(d):
     fig.show()
     return fig
 
-# @app.callback(
-#     Output('singleforex','figure'),
-#     Output('futures_datatable', 'data'),
-#     Input('futuresdropdown','value'))
-# def linechart(currencyname):    
-#     sqltablename = 'hrlytable_'+str(currencyname)
-#     hourlychosenmap = pd.read_sql_table(sqltablename, engine,index_col='index')
-#     hourly_fig = go.Figure(data=go.Scatter(x = hourlychosenmap.index, y = hourlychosenmap.Close))
-#     hourly_fig.update_traces(line_color='#000000')
-#     hourly_fig.update_layout(paper_bgcolor='rgb(169,169,169)')
-#     hourly_fig.show()
-    
-#     temp_df.loc[temp_df['Currency'] == currencyname]
-#     return hourly_fig, temp_df.to_dict('records')
-
-@app.callback(Output('singleforex','figure'),
+@app.callback(Output('linegraphheader','children'),
+            Output('singleforex','figure'),
               Output('content', 'children'),
-            Input('futuresdropdown', 'value'))
-def newlinegraphanddatatable(currencyname):
+            Input('futuresdropdown', 'value'),
+            Input('hrly_timerange', 'value'))
+def newlinegraphanddatatable(currencyname,hrlychoiceline):
     sqltablename = 'hrlytable_'+str(currencyname)
     hourlychosenmap = pd.read_sql_table(sqltablename, engine,index_col='index')
+    
+    lowestvalue = hourlychosenmap['Close'].max()
+    highestvalue = hourlychosenmap['Close'].min()
+    
+    lastdatetimevalue = hourlychosenmap.index[-1]
+    
+    if hrlychoiceline == 182:
+        sixmonths = lastdatetimevalue - relativedelta(months=6)
+        hourlychosenmap = hourlychosenmap[hourlychosenmap.index > sixmonths]
+    elif hrlychoiceline == 60:
+        threemonths = lastdatetimevalue - relativedelta(months=3)
+        hourlychosenmap = hourlychosenmap[hourlychosenmap.index > threemonths]    
+    elif hrlychoiceline == 30:
+        onemonth = lastdatetimevalue - relativedelta(months=1)
+        hourlychosenmap = hourlychosenmap[hourlychosenmap.index > onemonth]           
+
     hourly_fig = go.Figure(data=go.Scatter(x = hourlychosenmap.index, y = hourlychosenmap.Close))
     hourly_fig.update_traces(line_color='#000000')
     hourly_fig.update_layout(paper_bgcolor='rgb(169,169,169)')
-    hourly_fig.show()
 
     if currencyname != "":
         sqlfuturesname = 'futures_' + str(currencyname)
@@ -224,13 +232,41 @@ def newlinegraphanddatatable(currencyname):
                 data=fut_datatable.to_dict('records'),
                 style_data={'backgroundColor': 'transparent','align':"center"},
                 style_cell={'fontSize':10, 'font-family':'sans-serif'})
-    return hourly_fig,xyz
+        
+    hourly_fig.update_layout(yaxis_range=[lowestvalue,highestvalue])
+    hourly_fig.show()
+    linechartheader = html.P(currencyname + "/USD Change in Value",style={'textAlign':'center','color':'black','font-weight':'700'})
     
-    #sqlfuturesname = 'futures_'+str(currencyname)
-    #fut_datatable = pd.read_sql_table(sqlfuturesname, engine,index_col='index')
-    #return fut_datatable.to_dict('records')
+    return linechartheader,hourly_fig,xyz
 
+@app.callback(
+    Output('content3','children'),
+    Input('linegraphheader', "children"),
+    Input('content','data'),
+    Input('content','selected_rows'))
+def docalculations(currname,data,selected_rows):
+    
+    var = str(currname['props'])
 
+    var_partt = var.split('USD')[0]
+
+    curr = var_partt[-4:-1]
+    
+    if len(curr) > 1:
+        print(curr)
+    
+    # if selected_rows != None:
+    #     print(data)
+    #     print(currname)
+    #     copy = str(data)
+    #     copy_split = copy.split('}')
+    #     print(copy_split)
+    #     print("NOT NONE")
+    #     print(selected_rows)
+        
+    htmlcalculator = html.P(curr)    
+    
+    return htmlcalculator
 
 if __name__ == '__main__':
  #   app.run_server(host='0.0.0.0', port=8080, debug=True, use_reloader=False)

@@ -86,12 +86,12 @@ final_df = pd.DataFrame(columns=['Currency','First','Last'])
 df = pd.read_sql_table('heatmaptable', engine)
 
 
-print(df)
+
 last_value = df['Datetime'].loc[~df['Datetime'].isnull()].iloc[-1]
 print("Last value "+str(last_value))
 threedaysprior = last_value - relativedelta(days=3)
 print("Three days prior: "+str(threedaysprior))
-df = df[df['Datetime'] > threedaysprior]
+df = df[df['Datetime'] < threedaysprior]
 
 print(df.head())
 print(df.tail())

@@ -75,3 +75,5 @@ for k,r in invest_dict.items():
     print(gbl["futures_"+str(r)])
     gbl[df_name].to_sql(df_name,engine,if_exists='replace')
     
+
+rfrates = pd.DataFrame(columns=[''])
